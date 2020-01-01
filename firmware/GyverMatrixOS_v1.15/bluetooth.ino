@@ -1768,9 +1768,10 @@ void setRandomMode2() {
     cnt++;
     byte newMode = random(0, MODES_AMOUNT - 1);
 
+    if (newMode == DEMO_TEXT_2) continue;
+
 #if (SB_MATRIX == SB_OUTDOR)    
     if (11 == month(now()) && 0 == random(0, 2)) newMode = DEMO_TEXT_2;
-    else continue;
 #endif
    
     if (!getUsageForMode(newMode)) continue;
