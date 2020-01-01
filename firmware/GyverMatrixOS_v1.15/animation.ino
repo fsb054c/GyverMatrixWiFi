@@ -31,8 +31,8 @@ void animation(byte n) {
     switch (n) {
       case 1:
         // EFFECT_ANIMATION_1
-        loadImage(mario_array[frameNum]);
-        if (++frameNum >= sizeof(mario_array) / sizeof(mario_array[0])) frameNum = 0;
+        loadImage(NY1_array[frameNum]);
+        if (++frameNum >= sizeof(NY1_array) / sizeof(NY1_array[0])) frameNum = 0;
         break;
       /*  
       case 2:

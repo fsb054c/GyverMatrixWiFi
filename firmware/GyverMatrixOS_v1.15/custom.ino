@@ -51,6 +51,43 @@
 */
 
 byte lastOverlayMode;
+
+static const String NamesVrem1[4] = { " ДНЕЙ", " ЧАСОВ", " МИНУТ", " СЕКУНД"};
+static const String NamesVrem2[4] = { " ДЕНЬ", " ЧАС", " МИНУТА", " СЕКУНДА"};
+static const String NamesVrem3[4] = { " ДНЯ", " ЧАСА", " МИНУТЫ", " СЕКУНДЫ"};
+
+String WriteVremOtr(int iVrOtr, byte typeVrOtr){
+  if ((iVrOtr >= 5) && (iVrOtr <= 20)) return NamesVrem1[typeVrOtr];
+  else {
+    iVrOtr = iVrOtr %10;
+    if (iVrOtr == 1) return NamesVrem2[typeVrOtr];
+    else if ((iVrOtr >= 2) && (iVrOtr <=4)) return NamesVrem3[typeVrOtr];
+    else return NamesVrem1[typeVrOtr];
+  }
+}
+
+String WriteCounter(unsigned long tsCurRemained){
+  int iDays = tsCurRemained/(24*3600);
+  int iHours = tsCurRemained/3600;
+  int iMinutes = tsCurRemained/60;
+  int iSeconds = tsCurRemained;
+  
+  if (iDays > 1) return String(iDays,DEC) + WriteVremOtr(iDays,0) + ", " + String(iHours,DEC) + WriteVremOtr(iHours,1) + ", " + String(iMinutes,DEC) + WriteVremOtr(iMinutes,2) + ", "  + String(iSeconds,DEC) + WriteVremOtr(iSeconds,3);
+  else {
+    if (iHours >= 1) return String(iHours,DEC) + WriteVremOtr(iHours,1) + ", " + String(iMinutes,DEC) + WriteVremOtr(iMinutes,2) + ", "  + String(iSeconds,DEC) + WriteVremOtr(iSeconds,3);
+    else {
+      if (iMinutes >= 1)return String(iMinutes,DEC) + WriteVremOtr(iMinutes,2) + ", "  + String(iSeconds,DEC) + WriteVremOtr(iSeconds,3);
+      else {
+        if (iSeconds > 1)return String(iSeconds,DEC) + WriteVremOtr(iSeconds,3);
+        else {
+          return TEXT_3;
+        }
+      }
+    }
+  }
+}
+
+
 void customRoutine() {
 
   if (!gamemodeFlag || isAlarming) {
@@ -129,7 +166,23 @@ void customModes(byte aMode) {
   switch (aMode) {    
     case DEMO_TEXT_0:              fillString(TEXT_1, CRGB::RoyalBlue); break;
     case DEMO_TEXT_1:              fillString(TEXT_2, 1); break;
-    case DEMO_TEXT_2:              fillString(TEXT_3, 2); break;
+    case DEMO_TEXT_2:
+      {
+        tmElements_t te;
+        int currentMonth = month(now());
+        if (currentMonth == 11)
+        {
+          int currentYear = year(now());
+          te.Year = currentYear++;
+                 
+          long DiffTime=makeTime(te) - now();
+          fillString("До Нового Года осталось " + WriteCounter(DiffTime),1);
+        }else
+        {
+          fillString(TEXT_3, 2);
+        }
+      }
+      break;
     case DEMO_NOISE_MADNESS:       madnessNoise(); break;
     case DEMO_NOISE_CLOUD:         cloudNoise(); break;
     case DEMO_NOISE_LAVA:          lavaNoise(); break;
@@ -160,7 +213,7 @@ void customModes(byte aMode) {
     case DEMO_PAINTBALL:           lightBallsRoutine(); break;
     case DEMO_SWIRL:               swirlRoutine(); break;
 
-    case DEMO_ANIMATION_1:         animation(1); break;
+//    case DEMO_ANIMATION_1:         animation(1); break;
     /*
     case DEMO_ANIMATION_2:         animation(2); break;
     case DEMO_ANIMATION_3:         animation(3); break;
@@ -439,7 +492,7 @@ byte mapEffectToMode(byte effect) {
     case EFFECT_LIGHTERS:            tmp_mode = DEMO_LIGHTERS; break;             // lightersRoutine()
     case EFFECT_DAWN_ALARM:          tmp_mode = DEMO_DAWN_ALARM; break;           // dawnProcedure();
     case EFFECT_FILL_COLOR:          tmp_mode = DEMO_FILL_COLOR; break;           // fillColorProcedure();
-    case EFFECT_ANIMATION_1:         tmp_mode = DEMO_ANIMATION_1; break;          // animation(1);
+//    case EFFECT_ANIMATION_1:         tmp_mode = DEMO_ANIMATION_1; break;          // animation(1);
     /*
     case EFFECT_ANIMATION_2:         tmp_mode = DEMO_ANIMATION_2; break;          // animation(2);
     case EFFECT_ANIMATION_3:         tmp_mode = DEMO_ANIMATION_3; break;          // animation(3);
@@ -477,7 +530,7 @@ byte mapEffectToModeCode(byte effect) {
     case EFFECT_PAINTBALL:           tmp_mode = MC_PAINTBALL; break;            // lightBallsRoutine()
     case EFFECT_SWIRL:               tmp_mode = MC_SWIRL; break;                // swirlRoutine()
     case EFFECT_LIGHTERS:            tmp_mode = MC_LIGHTERS; break;             // lightersRoutine()
-    case EFFECT_ANIMATION_1:         tmp_mode = MC_IMAGE; break;                // animation(1);
+//    case EFFECT_ANIMATION_1:         tmp_mode = MC_IMAGE; break;                // animation(1);
     /*
     case EFFECT_ANIMATION_2:         tmp_mode = MC_IMAGE; break;                // animation(2);
     case EFFECT_ANIMATION_3:         tmp_mode = MC_IMAGE; break;                // animation(3);
@@ -534,7 +587,7 @@ byte mapModeToEffect(byte aMode) {
     case DEMO_SWIRL:                tmp_effect = EFFECT_SWIRL; break;               // swirlRoutine()
     case DEMO_LIGHTERS:             tmp_effect = EFFECT_LIGHTERS;  break;           // lightersRoutine()
     
-    case DEMO_ANIMATION_1:          tmp_effect = EFFECT_ANIMATION_1; break;         // animation(1);
+//    case DEMO_ANIMATION_1:          tmp_effect = EFFECT_ANIMATION_1; break;         // animation(1);
     /*
     case DEMO_ANIMATION_2:          tmp_effect = EFFECT_ANIMATION_2; break;         // animation(2);
     case DEMO_ANIMATION_3:          tmp_effect = EFFECT_ANIMATION_3; break;         // animation(3);
@@ -582,7 +635,7 @@ byte mapModeToGame(byte aMode) {
     case DEMO_PAINTBALL:            break;       // lightBallsRoutine()
     case DEMO_SWIRL:                break;       // swirlRoutine()
     case DEMO_LIGHTERS:             break;       // lightersRoutine()
-    case DEMO_ANIMATION_1:          break;       // animation(1);
+  //  case DEMO_ANIMATION_1:          break;       // animation(1);
     /*
     case DEMO_ANIMATION_2:          break;       // animation(2);
     case DEMO_ANIMATION_3:          break;       // animation(3);

@@ -1,6 +1,6 @@
 #define EEPROM_OK 0xA5                     // Флаг, показывающий, что EEPROM инициализирована корректными данными 
 #define GAME_EEPROM 160                    // начальная ячейка eeprom с параметрами игр (2 байта на игру, 6 игр)
-#define EFFECT_EEPROM 174                  // начальная ячейка eeprom с параметрами эффектов 3 байта на эффект, 40 эффектов)
+#define EFFECT_EEPROM 174                  // начальная ячейка eeprom с параметрами эффектов 3 байта на эффект, 29 эффектов)
 
 void loadSettings() {
 
@@ -71,13 +71,11 @@ void loadSettings() {
   //  159 - зарезервировано 
   // ....
   //  160 - 160+(Nигр*2)   - скорость игры
-  //  161 - 160+(Nигр*2)+1 - использовать игру в демо-режиме
+  //  160 - 160+(Nигр*2)+1 - использовать игру в демо-режиме
   // ....
-  //  174 - 174+(Nэфф*3)   - скорость эффекта
-  //  175 - 174+(Nэфф*3)+1 - 1 - оверлей часов разрешен; 0 - нет оверлея часов
-  //  176 - 174+(Nэфф*3)+2 - эффект в авторежиме: 1 - использовать; 0 - не использовать
-  // ....
-  //  300 -  
+  //  200 - 200+(Nэфф*3)   - скорость эффекта
+  //  200 - 200+(Nэфф*3)+1 - 1 - оверлей часов разрешен; 0 - нет оверлея часов
+  //  200 - 200+(Nэфф*3)+2 - эффект в авторежиме: 1 - использовать; 0 - не использовать
 
   // Сначала инициализируем имя сети/точки доступа, пароли и имя NTP-сервера значениями по умолчанию.
   // Ниже, если EEPROM уже инициализирован - из него будут загружены актуальные значения
@@ -89,6 +87,7 @@ void loadSettings() {
 
   // Инициализировано ли EEPROM
   bool isInitialized = EEPROMread(0) == EEPROM_OK;  
+  //isInitialized = false;
     
   if (isInitialized) {    
     globalBrightness = getMaxBrightness();
@@ -167,12 +166,12 @@ void loadSettings() {
     overlayEnabled = true;
     useNtp = true;
     SYNC_TIME_PERIOD = 60;
-    timeZoneOffset = 7;
+    timeZoneOffset = 3;
     CLOCK_ORIENT = 0;
-    COLOR_MODE = 0;
+    COLOR_MODE = 1;
     showDateInClock = true;  
-    showDateDuration = 3;
-    showDateInterval = 240;
+    showDateDuration = 5;
+    showDateInterval = 20;
     alarmWeekDay = 0;
     dawnDuration = 20;
     alarmEffect = EFFECT_DAWN_ALARM;
